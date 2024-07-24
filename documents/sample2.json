@@ -1,0 +1,36 @@
+{
+  "id": "sample2",
+  "fileName": "Sample",
+  "coverImage": "path/to/selected/cover/image.jpg", 
+  "emoji": "🌟", 
+  "content": {
+    "time": 1688153653088,
+    "blocks": [
+      {
+        "type": "header",
+        "data": {
+          "level": 1,
+          "text": "Welcome to the Sample Document"
+        }
+      },
+      {
+        "type": "paragraph",
+        "data": {
+          "text": "This is a paragraph in the sample document. You can include various types of content here."
+        }
+      },
+      {
+        "type": "list",
+        "data": {
+          "style": "unordered",
+          "items": [
+            "First item",
+            "Second item",
+            "Third item"
+          ]
+        }
+      }
+    ],
+    "version": "2.26.1"
+  }
+}

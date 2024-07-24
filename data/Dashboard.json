@@ -1,0 +1,31 @@
+{
+    "Workspace": [
+      {
+        "href": "data/Document1",
+        "icon": "FileIcon", 
+        "label": "Document 1",
+        "children": false
+      },
+      {
+        "href": "data/Project2",
+        "icon": "FileIcon",
+        "label": "Project 2",
+        "children": false
+      }
+    ],
+    "Private": [
+      {
+        "href": "data/PrivateDoc1",
+        "icon": "FileIcon",
+        "label": "Private Doc 1",
+        "children": false
+      },
+      {
+        "href": "data/PrivateDoc2",
+        "icon": "FileIcon",
+        "label": "Private Doc 2",
+        "children": false
+      }
+    ]
+  }
+  

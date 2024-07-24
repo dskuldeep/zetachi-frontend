@@ -1,0 +1,17 @@
+{
+    "SearchResults": [
+      {
+        "href": "data/SearchResult1",
+        "icon": "FileIcon",
+        "label": "Search Result 1",
+        "children": false
+      },
+      {
+        "href": "data/SearchResult2",
+        "icon": "FileIcon",
+        "label": "Search Result 2",
+        "children": false
+      }
+    ]
+  }
+  

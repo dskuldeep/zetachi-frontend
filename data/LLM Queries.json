@@ -1,0 +1,17 @@
+{
+    "Category1": [
+      {
+        "href": "data/Query1",
+        "icon": "FileIcon",
+        "label": "Query 1",
+        "children": false
+      },
+      {
+        "href": "data/Query2",
+        "icon": "FileIcon",
+        "label": "Query 2",
+        "children": false
+      }
+    ]
+  }
+  
