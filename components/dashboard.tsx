@@ -7,12 +7,14 @@ import { MenuItem, UserSubMenu } from './types';
 import HomeView from './home-view';
 import { SettingsModal } from './settings-modal';
 import { NotificationModal } from './notification-modal';
-import { Bell, Bot } from 'lucide-react';
+import { Bell, Bot, Power } from 'lucide-react';
 import { TooltipProvider } from './ui/tooltip';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@radix-ui/react-tooltip';
 import ZetaAISheet from './zeta-ai-sheet';
 import { SearchModal } from './search-modal';
 import MessageModal from './message-modal-comingsoon';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
 
 const Editor = dynamic(() => import('./Editor'), { ssr: false });
 
@@ -134,7 +136,7 @@ export function Dashboard() {
               <MenuIcon className="w-6 h-6" />
             </Button>
           </div>
-          <nav className="space-y-2">
+          <nav className="space-y-2 flex-1">
             {menuItems.map((item) => (
                   <TooltipProvider key={item.label}>
                   <Tooltip >
@@ -155,12 +157,33 @@ export function Dashboard() {
               )
             )}
           </nav>
+          <div className="flex items-center justify-center py-4">
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+            <Avatar>
+              <AvatarImage src="https://cdn.jsdelivr.net/gh/alohe/avatars/png/vibrent_18.png" />
+              <AvatarFallback>Profile</AvatarFallback>
+            </Avatar>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent>
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {/* <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem>Billing</DropdownMenuItem> */}
+              <DropdownMenuItem>Logout<Power style={{marginLeft: 35, scale: 0.7, color: '#gray' }}/></DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          
+        </div>
           <SettingsModal isOpen={isSettingModalOpen} onClose={closeSettingModal}/>
           <NotificationModal isOpen={isNotificationModalOpen} onClose={closeNotificationModal}/>
           <ZetaAISheet isOpen={isZetaAIOpen} onClose={closeZetaAI}/>
           <SearchModal isOpen={isSearchOpen} onClose={closeSearch}/>
           <MessageModal isOpen={isMessageOpen} onClose={closeMessage}/>
         </div>
+        
+        
         {/*Company Logo Implementation */}
         {isCollapsed ? (
           <div className="absolute bottom-5">
