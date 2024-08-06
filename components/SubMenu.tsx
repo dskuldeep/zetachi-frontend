@@ -38,7 +38,7 @@ const SubMenu: React.FC<SubMenuProps> = ({ items, onSelect, onDelete }) => {
 
   return (
     <TooltipProvider>
-      <div className="space-y-4 overflow-auto max-h-[200px]">
+      <div className="space-y-4">
         {items.map((item) => (
           <div
             key={item.id}

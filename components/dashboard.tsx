@@ -7,7 +7,7 @@ import { MenuItem, UserSubMenu } from './types';
 import HomeView from './home-view';
 import { SettingsModal } from './settings-modal';
 import { NotificationModal } from './notification-modal';
-import { Bell, Bot, Power } from 'lucide-react';
+import { Bell, Bot, Plus, Power } from 'lucide-react';
 import { TooltipProvider } from './ui/tooltip';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@radix-ui/react-tooltip';
 import ZetaAISheet from './zeta-ai-sheet';
@@ -66,6 +66,7 @@ export function Dashboard() {
 
   const fetchDocuments = async () => {
     try {
+      console.log("Fetching Document List from the Backend")
       const token = Cookies.get('access_token'); // Get the access token from cookies
   
       if (!token) {
@@ -78,7 +79,7 @@ export function Dashboard() {
           'Accept': '*/*'
         }
       });
-      console.log(token)
+      // console.log(token)
   
       if (!response.ok) {
         const errorData = await response.json();
@@ -86,6 +87,8 @@ export function Dashboard() {
       }
   
       const documents = await response.json();
+
+      console.log("Setting user sub menu")
   
       const submenu: UserSubMenu = {
         Documents: {
@@ -99,6 +102,8 @@ export function Dashboard() {
           })),
         },
       };
+
+      console.log(submenu)
   
       setUserSubMenu(submenu);
     } catch (error) {
@@ -109,6 +114,34 @@ export function Dashboard() {
   useEffect(() => {
     fetchDocuments();
   }, []);
+
+  const createDocument = async () => {
+    try {
+      const token = Cookies.get('access_token'); // Get the access token from cookies
+  
+      if (!token) {
+        throw new Error('No access token found');
+      }
+  
+      const response = await fetch('http://localhost:8000/create-document', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`, // Use the 'Authorization' header with 'Bearer' scheme
+          'Accept': '*/*'
+        }
+      });
+      if (!response.ok){
+        throw new Error('Failed to create new document');
+      }
+      const data = await response.json();
+      console.log('Document created successfully: ', data);
+      fetchDocuments();
+
+    } catch (error){
+      console.log('Error creating Document: ', error)
+
+    }
+  };
 
   const handleSelect = (item: MenuItem) => {
     const documentId = item.fileName;
@@ -262,10 +295,16 @@ export function Dashboard() {
         
       </aside>
       {selectedItem !== 'Dashboard' && userSubMenu[selectedItem] && Object.keys(userSubMenu[selectedItem]).map((category) => (
-        <aside key={category} className="w-64 p-4 border-r">
-          <div className="space-y-5">
-            <div key={category} className="space-y-4">
-              <h3 className="text-sm font-medium">{category}</h3>
+        <aside key={category} className="w-64 p-4 border-r flex flex-col">
+        <div className="space-y-5 flex-1">
+          <div key={category} className="space-y-4 flex-1">
+            <h3 className="text-sm font-medium">{category}</h3>
+            <div className='flex items-center justify-center'>
+              <Button variant="secondary" className='w-full' onClick={() => createDocument()}>
+                <Plus/>
+              </Button>
+            </div>
+            <div className='h-[90vh] overflow-y-auto'> {/* Set a fixed height and overflow-y: auto */}
               <SubMenu
                 items={userSubMenu[selectedItem][category]}
                 onSelect={handleSelect} 
@@ -273,7 +312,8 @@ export function Dashboard() {
               />
             </div>
           </div>
-        </aside>
+        </div>
+      </aside>
       ))}
       {selectedDocument ? (
         <div className="flex-1 flex flex-col">
