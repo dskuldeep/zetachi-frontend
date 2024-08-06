@@ -45,9 +45,9 @@ export async function middleware(req: NextRequest) {
                 console.log("Token Refreshed");
                 const data = await refreshResponse.json(); // Parse the JSON response
                 const { access_token } = data;
-
+                // console.log(access_token)
                 const res = NextResponse.next();
-                res.cookies.set('access_token', access_token, { httpOnly: true, maxAge: 15 * 60 });
+                res.cookies.set('access_token', access_token );
                 return res;
             }
 

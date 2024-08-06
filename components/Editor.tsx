@@ -13,7 +13,6 @@ import Delimiter from '@editorjs/delimiter';
 import Raw from '@editorjs/raw';
 import Attaches from '@editorjs/attaches';
 import Link from '@editorjs/link';
-import CustomTableBlock from './CustomTableBlock';
 
 interface EditorProps {
   data: any;
@@ -24,9 +23,9 @@ const Editor: React.FC<EditorProps> = ({ data }) => {
   const editorInstanceRef = useRef<EditorJS | null>(null);
 
   useEffect(() => {
-    if (!editorInstanceRef.current && containerRef.current) {
+    if (!editorInstanceRef.current) {
       editorInstanceRef.current = new EditorJS({
-        holder: containerRef.current,
+        holder: containerRef.current!,
         tools: {
           header: Header,
           list: List,
@@ -47,8 +46,20 @@ const Editor: React.FC<EditorProps> = ({ data }) => {
           console.log('EditorJS is ready!');
         },
       });
+    } else {
+      editorInstanceRef.current.render(data);
     }
-  }, [data, containerRef]);
+
+    return () => {
+      if (editorInstanceRef.current) {
+        console.log("Clearing the Editor");
+        if (typeof editorInstanceRef.current.destroy === 'function') {
+          editorInstanceRef.current.destroy();
+        }
+        editorInstanceRef.current = null;
+      }
+    };
+  }, [data]);
 
   return <div ref={containerRef} className="prose"></div>;
 };

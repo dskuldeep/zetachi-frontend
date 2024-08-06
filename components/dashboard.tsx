@@ -15,18 +15,41 @@ import { SearchModal } from './search-modal';
 import MessageModal from './message-modal-comingsoon';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
+import Cookies from 'js-cookie';
+
 
 const Editor = dynamic(() => import('./Editor'), { ssr: false });
 
 // Define your menu items
 const menuItems: MenuItem[] = [
-  { href: '#', icon: LayoutDashboardIcon, label: 'Dashboard', children: false },
-  { href: '#', icon: FileIcon, label: 'Documents', children: false },
-  { href: '#', icon: Bot, label: 'Zeta AI', children: false },
-  { href: '#', icon: SearchIcon, label: 'Search', children: false },
-  { href: '#', icon: Bell, label: 'Notifications', children: false },
-  { href: '#', icon: MessagesSquareIcon, label: 'Messages', children: false },
-  { href: '#', icon: SettingsIcon, label: 'Settings', children: false },
+  {
+    href: '#', icon: LayoutDashboardIcon, label: 'Dashboard', children: false,
+    id: undefined
+  },
+  {
+    href: '#', icon: FileIcon, label: 'Documents', children: false,
+    id: undefined
+  },
+  {
+    href: '#', icon: Bot, label: 'Zeta AI', children: false,
+    id: undefined
+  },
+  {
+    href: '#', icon: SearchIcon, label: 'Search', children: false,
+    id: undefined
+  },
+  {
+    href: '#', icon: Bell, label: 'Notifications', children: false,
+    id: undefined
+  },
+  {
+    href: '#', icon: MessagesSquareIcon, label: 'Messages', children: false,
+    id: undefined
+  },
+  {
+    href: '#', icon: SettingsIcon, label: 'Settings', children: false,
+    id: undefined
+  },
 ];
 
 export function Dashboard() {
@@ -41,40 +64,55 @@ export function Dashboard() {
   const [isMessageOpen, setIsMessageOpen] = useState(false);
 
 
-  useEffect(() => {
-    const fetchDocuments = async () => {
-      try {
-        const response = await fetch('/api/documents');
-        const documents = await response.json();
-
-        if (documents.error) {
-          throw new Error(documents.error);
-        }
-
-        const submenu: UserSubMenu = {
-          Documents: {
-            Documents: documents.map((doc: { id: string }) => ({
-              href: `#${doc.id}`,
-              icon: FileIcon,
-              label: doc.id,
-              fileName: doc.id,
-              children: false,
-            })),
-          },
-        };
-
-        setUserSubMenu(submenu);
-      } catch (error) {
-        console.error('Error fetching documents:', error);
+  const fetchDocuments = async () => {
+    try {
+      const token = Cookies.get('access_token'); // Get the access token from cookies
+  
+      if (!token) {
+        throw new Error('No access token found');
       }
-    };
-
+  
+      const response = await fetch('http://localhost:8000/list-documents', {
+        headers: {
+          'Authorization': `Bearer ${token}`, // Use the 'Authorization' header with 'Bearer' scheme
+          'Accept': '*/*'
+        }
+      });
+      console.log(token)
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to fetch documents');
+      }
+  
+      const documents = await response.json();
+  
+      const submenu: UserSubMenu = {
+        Documents: {
+          Documents: documents.map((doc: { id: string, title: string }) => ({
+            href: `#${doc.id}`,
+            icon: FileIcon,
+            label: doc.title,
+            fileName: doc.id,
+            children: false,
+            id: doc.id
+          })),
+        },
+      };
+  
+      setUserSubMenu(submenu);
+    } catch (error) {
+      console.error('Error fetching documents:', error);
+    }
+  };
+  
+  useEffect(() => {
     fetchDocuments();
   }, []);
 
   const handleSelect = (item: MenuItem) => {
     const documentId = item.fileName;
-
+    console.log(documentId)
     if (!documentId) {
       console.error('Document ID is undefined');
       return;
@@ -82,19 +120,39 @@ export function Dashboard() {
   
     const fetchDocument = async (id: string) => {
       try {
-        const response = await fetch(`/api/documents/${id}`);
+        const accessToken = Cookies.get('access_token');
+        // Construct the API URL with query parameter
+        const apiUrl = `http://localhost:8000/fetch-document?document_id=${id}`;
+    
+        // Perform the fetch request with the access token included in headers
+        const response = await fetch(apiUrl, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+    
+        // Check for HTTP errors
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+    
+        // Parse the JSON response
         const document = await response.json();
-  
+    
+        // Check for application-specific errors
         if (document.error) {
           throw new Error(document.error);
         }
-  
+        // Update the state with the fetched document
         setSelectedDocument(document);
         setSelectedItem('Documents'); // Ensure the Documents tab is selected
       } catch (error) {
         console.error('Error fetching document:', error);
       }
     };
+    
   
     fetchDocument(documentId);
   };
@@ -150,7 +208,7 @@ export function Dashboard() {
                   {!isCollapsed && <span>{item.label}</span>}
                   </Button>
                   </TooltipTrigger>
-                    <TooltipContent side = "right" className="border-2 border-solid border-gray-200 bg-gray-100 rounded-md p-2 text-sm"><p className='text-sm'>{item.label}</p></TooltipContent>
+                    <TooltipContent side = "right" className="border-2 border-solid border-gray-200 bg-gray-200 bg-opacity-90 rounded-md p-2 text-sm"><p className='text-sm'>{item.label}</p></TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
                 

@@ -41,7 +41,7 @@ const SubMenu: React.FC<SubMenuProps> = ({ items, onSelect, onDelete }) => {
       <div className="space-y-4 overflow-auto max-h-[200px]">
         {items.map((item) => (
           <div
-            key={item.label}
+            key={item.id}
             className="relative flex items-center group"
             onMouseEnter={() => setHoveredItem(item.label)}
             onMouseLeave={() => setHoveredItem(null)}
@@ -56,8 +56,7 @@ const SubMenu: React.FC<SubMenuProps> = ({ items, onSelect, onDelete }) => {
               <span>{item.label}</span>
             </Link>
             <div
-              className={`absolute right-0 flex items-center space-x-1 transition-opacity duration-200 ease-in-out group-hover:opacity-100 ${hoveredItem === item.label ? "opacity-100" : "opacity-0"}`}
-              style={{ opacity: hoveredItem === item.label ? 1 : 0 }}
+              className={`absolute right-0 flex items-center space-x-1 transition-opacity duration-200 ease-in-out ${hoveredItem === item.label ? "opacity-100" : "opacity-0"}`}
             >
               <Tooltip>
                 <TooltipTrigger>

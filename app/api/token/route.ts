@@ -24,10 +24,10 @@ export async function POST(request: Request) {
 
         // Set cookies for tokens
         const res = NextResponse.json(response.data);
-        res.cookies.set('access_token', access_token, { httpOnly: true, maxAge: 15 * 60 });
+        res.cookies.set('access_token', access_token, { httpOnly: false, maxAge: 15 * 60 });
         res.cookies.set('refresh_token', refresh_token, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 });
 
-        // console.log(res.cookies.get('refresh_token'))
+        console.log(res.cookies.get('refresh_token'))
 
         return res;
     } catch (error: any) {

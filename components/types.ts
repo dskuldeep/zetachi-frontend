@@ -1,6 +1,7 @@
-import { ComponentType, SVGProps } from 'react';
+import { ComponentType, Key, SVGProps } from 'react';
 
 export interface MenuItem {
+  id: Key | null | undefined;
   href: string;
   icon: React.ComponentType<SVGProps<SVGSVGElement>>;
   label: string;
