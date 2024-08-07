@@ -1,20 +1,25 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, SetStateAction, Key } from "react";
 import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { MenuItem } from "./types";
 import { Trash, Pencil, Copy } from "lucide-react";
+import { Input } from "./ui/input";
+import Cookies from "js-cookie";
 
 interface SubMenuProps {
   items: MenuItem[];
   onSelect: (item: MenuItem) => void;
   onDelete: (item: MenuItem) => void;
+  onRefresh: (item: MenuItem) => void;
 }
 
-const SubMenu: React.FC<SubMenuProps> = ({ items, onSelect, onDelete }) => {
-  const [tooltipOpen, setTooltipOpen] = useState<string | null>(null);
+const SubMenu: React.FC<SubMenuProps> = ({ items, onSelect, onDelete, onRefresh }) => {
+  const [tooltipOpen, setTooltipOpen] = useState<Key | null>(null);
   const tooltipRef = useRef<HTMLDivElement | null>(null);
-  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [hoveredItem, setHoveredItem] = useState<Key | null>(null);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const [isRenaming, setIsRenaming] = useState<string | null>(null);
+  const [renameTitle, setRenameTitle] = useState<string | null>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -31,6 +36,9 @@ const SubMenu: React.FC<SubMenuProps> = ({ items, onSelect, onDelete }) => {
   const handleAction = (item: MenuItem, action: string) => {
     if (action === 'delete') {
       onDelete(item);
+    } else if (action === 'rename'){
+      handleRenameClick(item);
+
     } else {
       console.log(`${action} action on ${item.label}`);
     }
@@ -46,14 +54,58 @@ const SubMenu: React.FC<SubMenuProps> = ({ items, onSelect, onDelete }) => {
     }
   }
 
+  const handleRenameClick = (item: MenuItem) => {
+    if (typeof item.id === "string"|| item.id === null){
+    setIsRenaming(item.id);
+    setRenameTitle(item.label);
+    } else {
+      console.log("Error in Sub Menu Item rename (Id type mismatch)")
+    }
+  };
+
+  const handleRenameChange = (e: { target: { value: SetStateAction<string | null>; }; }) => {
+    setRenameTitle(e.target.value);
+  };
+
+  const handleRenameSubmit = async (item: MenuItem) => {
+    try{
+      {/* Call the backend */}
+      const token = Cookies.get('access_token');
+      if (!token){
+        throw new Error('No access token found');
+      }
+
+      const response = await fetch("http://localhost:8000/rename-document", {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({id: item.id, title: renameTitle})
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to rename document');
+      }
+      console.log('Document renamed successfully!');
+
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setIsRenaming(null);
+      setRenameTitle("");
+      onRefresh(item);
+    }
+  };
+
   return (
     <TooltipProvider>
       <div className="space-y-4">
         {items.map((item) => (
           <div
-            key={item.id}
+            key={item.id as string}
             className="relative flex items-center group"
-            onMouseEnter={() => setHoveredItem(item.label)}
+            onMouseEnter={() => setHoveredItem(item.id || null)}
             onMouseLeave={() => setHoveredItem(null)}
           >
             <Link
@@ -63,10 +115,23 @@ const SubMenu: React.FC<SubMenuProps> = ({ items, onSelect, onDelete }) => {
               prefetch={false}
             >
               <item.icon className="h-5 w-5" />
-              <span>{item.label}</span>
+              {/*Here goes the logic for the Transition from Label to the Input Box*/}
+              {isRenaming === item.id ? (
+                <Input
+                type = "text"
+                value = {renameTitle ?? ''}
+                onChange={handleRenameChange}
+                onBlur={() => handleRenameSubmit(item)}
+                className="border border-gray-300 rounded px-2 py-1"
+                onClick={(e) => e.stopPropagation()}
+                />
+                ) : (
+                <span>{item.label}</span>
+                )}
+              
             </Link>
             <div
-              className={`absolute right-0 flex items-center space-x-1 transition-opacity duration-200 ease-in-out ${hoveredItem === item.label ? "opacity-100" : "opacity-0"}`}
+              className={`absolute right-0 flex items-center space-x-1 transition-opacity duration-200 ease-in-out ${hoveredItem === item.id ? "opacity-100" : "opacity-0"}`}
             >
               <Tooltip>
                 <TooltipTrigger>
@@ -74,7 +139,7 @@ const SubMenu: React.FC<SubMenuProps> = ({ items, onSelect, onDelete }) => {
                     className="flex items-center justify-center p-2 cursor-pointer hover:bg-gray-200 rounded-md"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setTooltipOpen((prev) => (prev === item.label ? null : item.label));
+                      setTooltipOpen(prev => (item.id === undefined ? null : (prev === item.id ? null : item.id)));
                     }}
                   >
                     <div className="flex space-x-1">
@@ -84,7 +149,7 @@ const SubMenu: React.FC<SubMenuProps> = ({ items, onSelect, onDelete }) => {
                     </div>
                   </div>
                 </TooltipTrigger>
-                {tooltipOpen === item.label && (
+                {tooltipOpen === item.id && (
                   <TooltipContent
                     side="top"
                     align="center"

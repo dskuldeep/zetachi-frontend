@@ -1,6 +1,5 @@
 import { SVGProps, useState, useEffect } from 'react';
 import { Button } from './ui/button';
-import Link from 'next/link';
 import SubMenu from './SubMenu';
 import dynamic from 'next/dynamic';
 import { MenuItem, UserSubMenu } from './types';
@@ -353,6 +352,7 @@ export function Dashboard() {
                 items={userSubMenu[selectedItem][category]}
                 onSelect={handleSelect} 
                 onDelete={deleteDocument} 
+                onRefresh={fetchDocuments}
               />
             </div>
           </div>
