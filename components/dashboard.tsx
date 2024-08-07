@@ -115,6 +115,50 @@ export function Dashboard() {
     fetchDocuments();
   }, []);
 
+  const deleteDocument = (item: MenuItem) => {
+    const documentId = item.fileName;
+    if (!documentId) {
+      console.error('Document ID is undefined');
+      return;
+    }
+    const deleteDoc = async (id: string) => {
+      try{
+        const token  = Cookies.get('access_token');
+        if (!token){
+          throw new Error('No access token found');
+        }
+
+        const response = await fetch(`http://localhost:8000/delete-document?document_id=${id}`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`, // Use the 'Authorization' header with 'Bearer' scheme
+            'Accept': '*/*'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+    
+        // Parse the JSON response
+        const document = await response.json();
+    
+        // Check for application-specific errors
+        if (document.error) {
+          throw new Error(document.error);
+        }
+        console.log(document);
+        fetchDocuments();
+
+
+      } catch (error) {
+        console.log('Error deleting document: ', error)
+      }
+    }
+    deleteDoc(documentId)
+
+  }
+
   const createDocument = async () => {
     try {
       const token = Cookies.get('access_token'); // Get the access token from cookies
@@ -308,7 +352,7 @@ export function Dashboard() {
               <SubMenu
                 items={userSubMenu[selectedItem][category]}
                 onSelect={handleSelect} 
-                onDelete={() => { throw new Error('Function not implemented.'); }} 
+                onDelete={deleteDocument} 
               />
             </div>
           </div>
@@ -318,7 +362,7 @@ export function Dashboard() {
       {selectedDocument ? (
         <div className="flex-1 flex flex-col">
           <main className="flex-1 overflow-auto p-4 space-y-4">
-            <Editor data={selectedDocument.content} />
+            <Editor data={selectedDocument.content} documentId={selectedDocument.id} />
           </main>
         </div>
       ) : (

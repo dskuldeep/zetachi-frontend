@@ -76,8 +76,11 @@ const SubMenu: React.FC<SubMenuProps> = ({ items, onSelect, onDelete }) => {
                 </TooltipTrigger>
                 {tooltipOpen === item.label && (
                   <TooltipContent
-                    className="absolute right-0 z-10 bg-white text-black border border-gray-300 rounded shadow-lg p-2"
+                    side="top"
+                    align="center"
+                    className="bg-white text-black border border-gray-300 rounded shadow-lg p-2"
                     ref={tooltipRef}
+                    
                   >
                     <div className="flex flex-col space-y-1">
                       <button
