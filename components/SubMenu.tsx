@@ -14,6 +14,7 @@ const SubMenu: React.FC<SubMenuProps> = ({ items, onSelect, onDelete }) => {
   const [tooltipOpen, setTooltipOpen] = useState<string | null>(null);
   const tooltipRef = useRef<HTMLDivElement | null>(null);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [selectedItem, setSelectedItem] = useState<string | null>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -36,6 +37,15 @@ const SubMenu: React.FC<SubMenuProps> = ({ items, onSelect, onDelete }) => {
     setTooltipOpen(null);
   };
 
+  const handleSelect = (item: MenuItem) => {
+    if (typeof item.id === "string"|| item.id === null){
+    setSelectedItem(item.id);
+    onSelect(item);
+    } else {
+      console.log("Error in Sub Menu Selection (Id type mismatch)")
+    }
+  }
+
   return (
     <TooltipProvider>
       <div className="space-y-4">
@@ -48,8 +58,8 @@ const SubMenu: React.FC<SubMenuProps> = ({ items, onSelect, onDelete }) => {
           >
             <Link
               href={item.href}
-              className="flex items-center gap-4 text-muted-foreground"
-              onClick={() => onSelect(item)}
+              className={`flex items-center gap-4 ${selectedItem === item.id ? "text-gray-800": "text-gray-400"}`}
+              onClick={() => handleSelect(item)}
               prefetch={false}
             >
               <item.icon className="h-5 w-5" />
