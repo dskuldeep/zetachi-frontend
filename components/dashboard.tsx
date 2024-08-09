@@ -109,9 +109,47 @@ export function Dashboard() {
       console.error('Error fetching documents:', error);
     }
   };
+
+  const refreshAccessToken = async () => {
+    try {
+      const refreshToken = Cookies.get('refresh_token'); // Get the refresh token from cookies
+    
+      if (!refreshToken) {
+        throw new Error('No refresh token found');
+      }
+    
+      const response = await fetch('http://localhost:8000/refresh', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${refreshToken}`,
+        },
+      });
+    
+      if (!response.ok) {
+        throw new Error('Failed to refresh access token');
+      }
+    
+      const data = await response.json();
+      const { access_token } = data;
+      Cookies.set('access_token', access_token); // Update the access token in cookies
+    } catch (error) {
+      console.error('Error refreshing access token:', error);
+      // Optionally handle token refresh failure (e.g., redirect to login)
+      // window.location.href = '/login';
+    }
+  };
+
   
   useEffect(() => {
     fetchDocuments();
+    // Set up an interval to refresh the token every 5 minutes
+    const refreshInterval = setInterval(() => {
+      refreshAccessToken();
+      console.log("Token Refreshed");
+    }, 20 * 60 * 1000); // 5 minutes
+
+    // Clean up interval on component unmount
+    return () => clearInterval(refreshInterval);
   }, []);
 
   const deleteDocument = (item: MenuItem) => {

@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Zetachi",
-  description: "Building Knowledgebases Inteliigent",
+  description: "Making Knowledgebases Inteliigent",
 };
 
 export default function RootLayout({
