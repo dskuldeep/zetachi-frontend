@@ -5,11 +5,12 @@ export default function KnowledgeCard (){
     return (
         <Card>
                 <CardHeader>
-                  <CardTitle>Knowledge Base</CardTitle>
+                  <CardTitle>Search Knowledge Base</CardTitle>
                   <CardDescription>Browse and search the knowledge base for answers to your questions.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Input type="search" placeholder="Search knowledge base..." />
+                  <Input type="search" placeholder="Search" />
+                  {/* Here goes the search Logic */}
                   <div className="mt-4 space-y-2">
                     <div>
                       <h4 className="font-semibold">Getting Started</h4>

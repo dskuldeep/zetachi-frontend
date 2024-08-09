@@ -51,7 +51,11 @@ const menuItems: MenuItem[] = [
   },
 ];
 
-export function Dashboard() {
+interface DashboardProps {
+  initialDocumentId?: string;
+}
+
+export function Dashboard({ initialDocumentId }: DashboardProps) {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [selectedItem, setSelectedItem] = useState('Dashboard');
   const [selectedDocument, setSelectedDocument] = useState<any>(null);
@@ -61,7 +65,7 @@ export function Dashboard() {
   const [isZetaAIOpen, setIsZetaAIOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMessageOpen, setIsMessageOpen] = useState(false);
-
+  const documentIdFromUrl = initialDocumentId || '';
 
   const fetchDocuments = async () => {
     try {
@@ -142,15 +146,19 @@ export function Dashboard() {
   
   useEffect(() => {
     fetchDocuments();
+
+    if (documentIdFromUrl) {
+      handleSelect({fileName: documentIdFromUrl} as MenuItem)
+    }
     // Set up an interval to refresh the token every 5 minutes
     const refreshInterval = setInterval(() => {
       refreshAccessToken();
       console.log("Token Refreshed");
-    }, 20 * 60 * 1000); // 5 minutes
+    }, 20 * 60 * 1000); // 20 minutes
 
     // Clean up interval on component unmount
     return () => clearInterval(refreshInterval);
-  }, []);
+  }, [documentIdFromUrl]);
 
   const deleteDocument = (item: MenuItem) => {
     const documentId = item.fileName;
