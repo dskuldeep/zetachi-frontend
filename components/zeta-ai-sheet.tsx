@@ -29,9 +29,9 @@ export default function ZetaAISheet({isOpen, onClose}: ZetaAISheetProps){
                         {/* Code to implement chat history interface */}
                     </ResizablePanel>
                     <ResizableHandle withHandle />
-                    <ResizablePanel defaultSize={75} className="parent-container" style={{ overflowY: 'auto', maxHeight: 'calc(100vh - 8%)' }}>
+                    <ResizablePanel defaultSize={75} className="overflow-hidden max-h-[calc(100vh-8%)] w-full relative">
                         {/* Code to implement chat interface */}
-                        <div className="absolute bottom-0">
+                        <div className="flex flex-col h-full w-full">
                             <AIChat/>
                         </div>
                     </ResizablePanel>

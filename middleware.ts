@@ -8,12 +8,10 @@ export async function middleware(req: NextRequest) {
     const publicPaths = ['/login', '/register', '/test'];
 
     if (publicPaths.includes(pathname) || pathname.startsWith('/_next/')) {
-        console.log("Accessed Public Path");
         return NextResponse.next();
     }
 
     if (!token && !refreshToken) {
-        console.log("No Token or Refresh Token");
         return NextResponse.redirect(new URL('/login', req.url));
     }
 
@@ -21,13 +19,11 @@ export async function middleware(req: NextRequest) {
         const dashboardResponse = await fetch('http://localhost:8000/dashboard', {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${token || ''}`, // Ensure token is included
+                'Authorization': `Bearer ${token || ''}`,
             },
         });
 
         if (dashboardResponse.ok) {
-            const data = await dashboardResponse.json(); // Parse the JSON response
-            console.log("Valid Token - Dashboard Data:", data);
             return NextResponse.next();
         }
 
@@ -38,16 +34,14 @@ export async function middleware(req: NextRequest) {
                 headers: {
                     'Authorization': `Bearer ${refreshToken || ''}`,
                 },
-                
             });
 
             if (refreshResponse.ok) {
-                console.log("Token Refreshed");
-                const data = await refreshResponse.json(); // Parse the JSON response
+                const data = await refreshResponse.json();
                 const { access_token } = data;
-                // console.log(access_token)
+
                 const res = NextResponse.next();
-                res.cookies.set('access_token', access_token );
+                res.cookies.set('access_token', access_token);
                 return res;
             }
 
@@ -58,12 +52,12 @@ export async function middleware(req: NextRequest) {
         console.log("Token Validation Failed");
         return NextResponse.redirect(new URL('/login', req.url));
 
-    } catch (error: any) {
+    } catch (error) {
         console.error("Middleware Error:", error);
         return NextResponse.redirect(new URL('/login', req.url));
     }
 }
 
 export const config = {
-    matcher: ['/dashboard/:path*']
+    matcher: ['/dashboard/:path*'],
 };

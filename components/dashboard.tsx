@@ -284,7 +284,7 @@ export function Dashboard() {
                   {!isCollapsed && <span>{item.label}</span>}
                   </Button>
                   </TooltipTrigger>
-                    <TooltipContent side = "right" className="border-2 border-solid border-gray-200 bg-gray-200 bg-opacity-90 rounded-md p-2 text-sm"><p className='text-sm'>{item.label}</p></TooltipContent>
+                    <TooltipContent side = "right" className="border-2 border-solid border-gray-200 bg-gray-200 bg-opacity-90 rounded-md p-2 text-sm relative z-50"><p className='text-sm'>{item.label}</p></TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
                 
