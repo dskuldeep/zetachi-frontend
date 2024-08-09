@@ -15,6 +15,7 @@ import MessageModal from './message-modal-comingsoon';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
 import Cookies from 'js-cookie';
+import { LoadingSpinner } from './LoadingSpinner';
 
 
 const Editor = dynamic(() => import('./Editor'), { ssr: false });
@@ -49,6 +50,10 @@ const menuItems: MenuItem[] = [
     href: '#', icon: SettingsIcon, label: 'Settings', children: false,
     id: undefined
   },
+  // {
+  //   href: '#', icon: MessagesSquareIcon, label: 'msgs', children: false,
+  //   id: undefined
+  // }
 ];
 
 interface DashboardProps {
@@ -56,6 +61,7 @@ interface DashboardProps {
 }
 
 export function Dashboard({ initialDocumentId }: DashboardProps) {
+  const [loading, setLoading] = useState(true);
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [selectedItem, setSelectedItem] = useState('Dashboard');
   const [selectedDocument, setSelectedDocument] = useState<any>(null);
@@ -69,6 +75,7 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
 
   const fetchDocuments = async () => {
     try {
+      setLoading(true);
       console.log("Fetching Document List from the Backend")
       const token = Cookies.get('access_token'); // Get the access token from cookies
   
@@ -109,8 +116,10 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
       console.log(submenu)
   
       setUserSubMenu(submenu);
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching documents:', error);
+      setLoading(false);
     }
   };
 
@@ -242,6 +251,7 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
   
     const fetchDocument = async (id: string) => {
       try {
+        setLoading(true);
         const accessToken = Cookies.get('access_token');
         // Construct the API URL with query parameter
         const apiUrl = `http://localhost:8000/fetch-document?document_id=${id}`;
@@ -272,6 +282,8 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
         setSelectedItem('Documents'); // Ensure the Documents tab is selected
       } catch (error) {
         console.error('Error fetching document:', error);
+      } finally {
+        setLoading(false);
       }
     };
     
@@ -405,7 +417,7 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
         </div>
       </aside>
       ))}
-      {selectedDocument ? (
+      {loading ? (<LoadingSpinner/>) : selectedDocument ? (
         <div className="flex-1 flex flex-col">
           <main className="flex-1 overflow-auto p-4 space-y-4">
             <Editor data={selectedDocument.content} documentId={selectedDocument.id} />
@@ -414,6 +426,10 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
       ) : (
         selectedItem === 'Dashboard' ? <HomeView /> : null
       )}
+      {/* {
+        selectedItem === 'msgs' ? <HomeView /> : null
+        
+      } */}
     </div>
   );
 }

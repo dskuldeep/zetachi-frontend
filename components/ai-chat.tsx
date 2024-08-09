@@ -1,9 +1,15 @@
 import { SendIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
-import { Input } from "./ui/input";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import Cookies from "js-cookie";
+import ReactMarkdown from 'react-markdown';
+import remarkBreaks from 'remark-breaks';
+import remarkGfm from 'remark-gfm';
+import { FC } from 'react';
+import { Textarea } from "./ui/textarea";
+
+
 
 interface Message {
   user: string;
@@ -14,8 +20,8 @@ export default function AIChat() {
   const [inputValue, setInputValue] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
+  const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInputValue(event.target.value);
   };
 
   const handleSendMessage = async () => {
@@ -42,12 +48,48 @@ export default function AIChat() {
     }
   };
 
-  const handleKeyDown = (event: { key: string; preventDefault: () => void; }) =>{
-    if (event.key === 'Enter'){
-        event.preventDefault();
-        handleSendMessage();
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && event.shiftKey) {
+      // Insert a new line character in the textarea
+      event.preventDefault();
+      setInputValue((prevValue) => prevValue + '\n');
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
+      handleSendMessage();
     }
-  }
+  };
+
+  const remarkPlugins = [remarkBreaks, remarkGfm];
+
+  const components: { [key: string]: FC<{ children: ReactNode }> } = {
+    br: () => <br />,
+    ul: (props) => (
+      <ul className="list-disc pl-4">
+        {props.children}
+      </ul>
+    ),
+    ol: (props) => (
+      <ol className="list-decimal pl-4">
+        {props.children}
+      </ol>
+    ),
+    li: (props) => (
+      <li className="py-1">
+        {props.children}
+      </li>
+    ),
+    pre: (props) => (
+      <pre className="bg-gray-100 p-4 rounded-md overflow-auto">
+        <code>{props.children}</code>
+      </pre>
+    ),
+    code: (props) => (
+      <code className="bg-gray-100 p-1 rounded-md">
+        {props.children}
+      </code>
+    ),
+  };
+  
 
   return (
     <>
@@ -63,17 +105,23 @@ export default function AIChat() {
             <div className="space-y-4">
               {messages.map((message, index) => (
                 <div key={index} className="flex flex-col">
-                  <span className="text-gray-500">{message.user}</span>
-                  <span className="text-gray-800">{message.ai}</span>
-                </div>
+                  <span className="bg-blue-100 text-gray-700 px-2 py-1 rounded-md inline-block">{message.user}</span>
+                  <br/>
+                  <ReactMarkdown
+                    className="text-gray-700"
+                    components={components}
+                    remarkPlugins={remarkPlugins}
+                  >
+                    {message.ai}
+                  </ReactMarkdown>
+                  </div>
               ))}
             </div>
           </CardContent>
         </Card>
       </div>
       <div className="flex items-center p-4 border-t">
-        <Input
-          type="text"
+        <Textarea
           placeholder="Type your message"
           className="flex-1"
           value={inputValue}

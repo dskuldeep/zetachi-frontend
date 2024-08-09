@@ -11,8 +11,9 @@ import Marker from '@editorjs/marker';
 import CheckList from '@editorjs/checklist';
 import Delimiter from '@editorjs/delimiter';
 import Raw from '@editorjs/raw';
-import Attaches from '@editorjs/attaches';
+import AttachesTool from '@editorjs/attaches';
 import Link from '@editorjs/link';
+import ImageTool from '@editorjs/image';
 import Cookies from 'js-cookie';
 import { debounce } from 'lodash';
 
@@ -80,7 +81,61 @@ const Editor: React.FC<EditorProps> = ({ data, documentId }) => {
           checklist: CheckList,
           delimiter: Delimiter,
           raw: Raw,
-          attaches: Attaches,
+          attaches: {
+            class: AttachesTool,
+            config: {
+              endpoint: 'http://localhost:8000/upload-attachment',
+              uploader: {
+                uploadByFile(file: any){
+                  if (file.size > 5 * 1024 * 1024) {
+                    alert("File size exceeds 5 MB");
+                    return;
+                  }
+                  const accessToken = Cookies.get("access_token");
+
+                  const formData = new FormData();
+                  formData.append('file', file);
+                  return fetch('http://localhost:8000/upload-attachment', {
+                    method: 'POST',
+                    headers: {
+                      'Authorization': `Bearer ${accessToken}`
+                    },
+                    body: formData
+                  })
+                  .then(response => {
+                    if (!response.ok) {
+                      throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                  })
+                  .then(result => {
+                    if (result.message === 'File uploaded successfully') {
+                      return {
+                        success: 1,
+                        file: {
+                          url: `http://localhost:8000/download-attachment?file_key=${result.s3_key}`, // Construct the URL
+                          name: result.s3_key, //Use this to clean up the files from s3 later by cross validating deleted files in mongo
+                          extension: result.filename.split('.').pop(),
+                          title: result.filename
+                        }, 
+                      };
+                    } else {
+                      throw new Error('Upload failed');
+                    }
+                  })
+                  .catch(error => {
+                    console.error('Error:', error);
+                    return {
+                      success: 0,
+                      error: error.message
+                    };
+                  });
+                }
+                
+              }
+            }
+
+          },
           link: Link,
         },
         data,
