@@ -6,7 +6,7 @@ import { MenuItem, UserSubMenu } from './types';
 import HomeView from './home-view';
 import { SettingsModal } from './settings-modal';
 import { NotificationModal } from './notification-modal';
-import { Bell, Bot, Plus, Power } from 'lucide-react';
+import { Bell, Bot, Plus, Power, User } from 'lucide-react';
 import { TooltipProvider } from './ui/tooltip';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@radix-ui/react-tooltip';
 import ZetaAISheet from './zeta-ai-sheet';
@@ -72,6 +72,37 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMessageOpen, setIsMessageOpen] = useState(false);
   const documentIdFromUrl = initialDocumentId || '';
+  const [username, setUsername] = useState('');
+
+  const fetchUser = async() => {
+    try {
+      console.log("Fetching User Details");
+      const token = Cookies.get('access_token');
+      if (!token) {
+        throw new Error('No access token found');
+      }
+      const response = await fetch('http://localhost:8000/dashboard', {
+
+        headers: {
+          'Authorization': `Bearer ${token}`, // Use the 'Authorization' header with 'Bearer' scheme
+          'Accept': '*/*'
+        }
+        
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to fetch user');
+      }
+  
+      const user = await response.json();
+
+      setUsername(user.username);
+    } catch (e){
+      console.log("Error in fetching user details", e)
+    }
+
+  }
 
   const fetchDocuments = async () => {
     try {
@@ -154,6 +185,7 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
 
   
   useEffect(() => {
+    fetchUser();
     fetchDocuments();
 
     if (documentIdFromUrl) {
@@ -241,6 +273,49 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
     }
   };
 
+  const refresh = async () => {
+    fetchDocuments();
+    fetchDocument(selectedDocument.id);
+  };
+
+  const fetchDocument = async (id: string) => {
+    try {
+      setLoading(true);
+      const accessToken = Cookies.get('access_token');
+      // Construct the API URL with query parameter
+      const apiUrl = `http://localhost:8000/fetch-document?document_id=${id}`;
+  
+      // Perform the fetch request with the access token included in headers
+      const response = await fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      // Check for HTTP errors
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      // Parse the JSON response
+      const document = await response.json();
+  
+      // Check for application-specific errors
+      if (document.error) {
+        throw new Error(document.error);
+      }
+      // Update the state with the fetched document
+      setSelectedDocument(document);
+      setSelectedItem('Documents'); // Ensure the Documents tab is selected
+    } catch (error) {
+      console.error('Error fetching document:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSelect = (item: MenuItem) => {
     const documentId = item.fileName;
     console.log(documentId)
@@ -249,52 +324,13 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
       return;
     }
   
-    const fetchDocument = async (id: string) => {
-      try {
-        setLoading(true);
-        const accessToken = Cookies.get('access_token');
-        // Construct the API URL with query parameter
-        const apiUrl = `http://localhost:8000/fetch-document?document_id=${id}`;
-    
-        // Perform the fetch request with the access token included in headers
-        const response = await fetch(apiUrl, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-          },
-        });
-    
-        // Check for HTTP errors
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-    
-        // Parse the JSON response
-        const document = await response.json();
-    
-        // Check for application-specific errors
-        if (document.error) {
-          throw new Error(document.error);
-        }
-        // Update the state with the fetched document
-        setSelectedDocument(document);
-        setSelectedItem('Documents'); // Ensure the Documents tab is selected
-      } catch (error) {
-        console.error('Error fetching document:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-  
     fetchDocument(documentId);
   };
 
   const handleMainMenuClick = (label: string) => {
     if (label === 'Dashboard') {
       setSelectedItem('Dashboard');
-      setSelectedDocument(null); // Reset document selection when dashboard is selected
+      // setSelectedDocument(null); // Reset document selection when dashboard is selected
     } else if (label === 'Documents') {
       setSelectedItem('Documents');
       // Optionally, you can clear or manage the document state here
@@ -410,21 +446,26 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
                 items={userSubMenu[selectedItem][category]}
                 onSelect={handleSelect} 
                 onDelete={deleteDocument} 
-                onRefresh={fetchDocuments}
+                onRefresh={refresh}
               />
             </div>
           </div>
         </div>
       </aside>
       ))}
-      {loading ? (<LoadingSpinner/>) : selectedDocument ? (
+      {loading ? (<LoadingSpinner/>) : selectedItem === 'Dashboard' ? (
+        <HomeView username={username} items={userSubMenu}/>
+      ) : (
+        selectedDocument ? (
         <div className="flex-1 flex flex-col">
           <main className="flex-1 overflow-auto p-4 space-y-4">
+            <div className='flex-1 h-1/6'>
+            <h3>{selectedDocument.title}</h3>
+            </div>
             <Editor data={selectedDocument.content} documentId={selectedDocument.id} />
           </main>
-        </div>
-      ) : (
-        selectedItem === 'Dashboard' ? <HomeView /> : null
+        </div>) : null
+        
       )}
       {/* {
         selectedItem === 'msgs' ? <HomeView /> : null

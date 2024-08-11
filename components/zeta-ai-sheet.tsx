@@ -17,7 +17,7 @@ interface ZetaAISheetProps {
 export default function ZetaAISheet({isOpen, onClose}: ZetaAISheetProps){
     return (
         <Sheet open={isOpen} onOpenChange={onClose} >
-            <SheetContent style={{ maxWidth: '50vw', maxHeight: '100vh' }}>
+            <SheetContent style={{ maxWidth: '60vw', maxHeight: '100vh' }}>
                 <SheetHeader>
                 <SheetTitle>Zeta AI</SheetTitle>
                 <SheetDescription>
