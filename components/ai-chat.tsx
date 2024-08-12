@@ -8,6 +8,7 @@ import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
 import { FC } from 'react';
 import { Textarea } from "./ui/textarea";
+import { LoadingSpinner } from "./LoadingSpinner";
 
 
 
@@ -26,6 +27,7 @@ export default function AIChat() {
 
   const handleSendMessage = async () => {
     if (inputValue.trim() !== '') {
+      setInputValue('');
       setLoading(true);
       try {
         const accessTokenCookie = Cookies.get("access_token");
@@ -39,7 +41,6 @@ export default function AIChat() {
         });
         const data = await response.json();
         setMessages((prevMessages) => [...prevMessages, { user: inputValue, ai: data.message }]);
-        setInputValue('');
       } catch (error) {
         console.error(error);
       } finally {
@@ -106,7 +107,7 @@ export default function AIChat() {
           <CardContent>
             <div className="space-y-4">
               {messages.length === 0 ? (
-                <div className="items-center justify-center mx-auto grid gap-6 grid-cols-3">
+                  <div className="items-center justify-center mx-auto grid gap-6 grid-cols-3">
                   
                 <Card className="group">
                   <CardContent className="p-4 flex flex-col gap-4 h-full">
@@ -135,6 +136,7 @@ export default function AIChat() {
                 <br/>
               </div>
               // This is the section that gets showed when there are no messages
+                
 
               ):(messages.map((message, index) => (
                 <div key={index} className="flex flex-col">
@@ -149,6 +151,7 @@ export default function AIChat() {
                   </ReactMarkdown>
                   </div>
               )))}
+              {loading?(<LoadingSpinner/>):(null)}
             </div>
             <br />
             <div className="flex items-center p-4 border-t">

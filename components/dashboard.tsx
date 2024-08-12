@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
 import Cookies from 'js-cookie';
 import { LoadingSpinner } from './LoadingSpinner';
+import EditorHeader from './editor-header';
 
 
 const Editor = dynamic(() => import('./Editor'), { ssr: false });
@@ -459,9 +460,8 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
         selectedDocument ? (
         <div className="flex-1 flex flex-col">
           <main className="flex-1 overflow-auto p-4 space-y-4">
-            <div className='flex-1 h-1/6'>
-            <h3>{selectedDocument.title}</h3>
-            </div>
+            <EditorHeader document_title={selectedDocument.title} document_bg={selectedDocument.title}/> 
+            {/* Placeholder for the Bg Prop */}
             <Editor data={selectedDocument.content} documentId={selectedDocument.id} />
           </main>
         </div>) : null

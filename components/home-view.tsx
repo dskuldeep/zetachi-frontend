@@ -35,14 +35,14 @@ export default function HomeView(props: HomeViewProps) {
 
   return (
     <div className="flex-1 flex flex-col">
-      <main className="overflow-auto p-4 space-y-4 bg-gray-100 h-full">
-        <div className="w-1/2 mx-auto">
+      <main className="flex-1 overflow-auto p-4 space-y-4 bg-gray-100 h-full">
+        <div className="w-1/2 mx-auto mb-10">
           <br />
           <h1 className="font-bold text-2xl text-center">Hello {username}!</h1>
           <br />
         </div>
 
-        {itemsToShow.length > 0 && (
+        {/* {itemsToShow.length > 0 && (
           <div className="w-1/2 mx-auto justify-center">
             <Carousel
               opts={{
@@ -69,7 +69,7 @@ export default function HomeView(props: HomeViewProps) {
             </Carousel>
             <br />
           </div>
-        )}
+        )} */}
 
         <div className="w-1/2 mx-auto">
           <AIChat />
