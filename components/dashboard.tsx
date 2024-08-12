@@ -25,35 +25,35 @@ const Editor = dynamic(() => import('./Editor'), { ssr: false });
 const menuItems: MenuItem[] = [
   {
     href: '#', icon: LayoutDashboardIcon, label: 'Dashboard', children: false,
-    id: undefined
+    id: null
   },
   {
     href: '#', icon: FileIcon, label: 'Documents', children: false,
-    id: undefined
+    id: null
   },
   {
     href: '#', icon: Bot, label: 'Zeta AI', children: false,
-    id: undefined
+    id: null
   },
   {
     href: '#', icon: SearchIcon, label: 'Search', children: false,
-    id: undefined
+    id: null
   },
   {
     href: '#', icon: Bell, label: 'Notifications', children: false,
-    id: undefined
+    id: null
   },
   {
     href: '#', icon: MessagesSquareIcon, label: 'Messages', children: false,
-    id: undefined
+    id: null
   },
   {
     href: '#', icon: SettingsIcon, label: 'Settings', children: false,
-    id: undefined
+    id: null
   },
   // {
   //   href: '#', icon: MessagesSquareIcon, label: 'msgs', children: false,
-  //   id: undefined
+  //   id: null
   // }
 ];
 
@@ -319,9 +319,8 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
 
   const handleSelect = (item: MenuItem) => {
     const documentId = item.fileName;
-    console.log(documentId)
     if (!documentId) {
-      console.error('Document ID is undefined');
+      console.log('Document ID is null | undefined'); /*This Error is a side effect of the way the Submenu reverse selection is implemented*/
       return;
     }
   
@@ -448,6 +447,7 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
                 onSelect={handleSelect} 
                 onDelete={deleteDocument} 
                 onRefresh={refresh}
+                selectedDoc={selectedDocument}
               />
             </div>
           </div>

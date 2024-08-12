@@ -11,9 +11,10 @@ interface SubMenuProps {
   onSelect: (item: MenuItem) => void;
   onDelete: (item: MenuItem) => void;
   onRefresh: (item: MenuItem) => void;
+  selectedDoc: MenuItem | null;
 }
 
-const SubMenu: React.FC<SubMenuProps> = ({ items, onSelect, onDelete, onRefresh }) => {
+const SubMenu: React.FC<SubMenuProps> = ({ items, onSelect, onDelete, onRefresh, selectedDoc }) => {
   const [tooltipOpen, setTooltipOpen] = useState<Key | null>(null);
   const tooltipRef = useRef<HTMLDivElement | null>(null);
   const [hoveredItem, setHoveredItem] = useState<Key | null>(null);
@@ -22,6 +23,11 @@ const SubMenu: React.FC<SubMenuProps> = ({ items, onSelect, onDelete, onRefresh 
   const [renameTitle, setRenameTitle] = useState<string | null>(null);
 
   useEffect(() => {
+
+    if(selectedDoc !== null){
+      handleSelect(selectedDoc)
+    }
+
     const handleClickOutside = (event: MouseEvent) => {
       if (tooltipRef.current && !tooltipRef.current.contains(event.target as Node)) {
         setTooltipOpen(null);
