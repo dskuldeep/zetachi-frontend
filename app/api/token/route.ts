@@ -12,7 +12,7 @@ export async function POST(request: Request) {
         params.append('password', password);
 
         // Send a POST request with URL-encoded data
-        const response = await axios.post("http://localhost:8000/token", params, {
+        const response = await axios.post("http://api.getzetachi.com/token", params, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }

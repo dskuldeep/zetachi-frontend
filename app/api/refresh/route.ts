@@ -6,7 +6,7 @@ export async function POST(request: NextRequest){
     const { refresh_token } = await request.json();
 
     try{
-        const response = await axios.post('http://localhost:8000/refresh', {
+        const response = await axios.post('http://api.getzetachi.com/refresh', {
             token: refresh_token,
         });
         const { access_token } = response.data.access_token;

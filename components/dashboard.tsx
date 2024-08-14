@@ -82,7 +82,7 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
       if (!token) {
         throw new Error('No access token found');
       }
-      const response = await fetch('http://localhost:8000/dashboard', {
+      const response = await fetch('http://api.getzetachi.com/dashboard', {
 
         headers: {
           'Authorization': `Bearer ${token}`, // Use the 'Authorization' header with 'Bearer' scheme
@@ -115,7 +115,7 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
         throw new Error('No access token found');
       }
   
-      const response = await fetch('http://localhost:8000/list-documents', {
+      const response = await fetch('http://api.getzetachi.com/list-documents', {
         headers: {
           'Authorization': `Bearer ${token}`, // Use the 'Authorization' header with 'Bearer' scheme
           'Accept': '*/*'
@@ -163,7 +163,7 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
         throw new Error('No refresh token found');
       }
     
-      const response = await fetch('http://localhost:8000/refresh', {
+      const response = await fetch('http://api.getzetachi.com/refresh', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${refreshToken}`,
@@ -215,7 +215,7 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
           throw new Error('No access token found');
         }
 
-        const response = await fetch(`http://localhost:8000/delete-document?document_id=${id}`, {
+        const response = await fetch(`http://api.getzetachi.com/delete-document?document_id=${id}`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`, // Use the 'Authorization' header with 'Bearer' scheme
@@ -254,7 +254,7 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
         throw new Error('No access token found');
       }
   
-      const response = await fetch('http://localhost:8000/create-document', {
+      const response = await fetch('http://api.getzetachi.com/create-document', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`, // Use the 'Authorization' header with 'Bearer' scheme
@@ -284,7 +284,7 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
       setLoading(true);
       const accessToken = Cookies.get('access_token');
       // Construct the API URL with query parameter
-      const apiUrl = `http://localhost:8000/fetch-document?document_id=${id}`;
+      const apiUrl = `http://api.getzetachi.com/fetch-document?document_id=${id}`;
   
       // Perform the fetch request with the access token included in headers
       const response = await fetch(apiUrl, {

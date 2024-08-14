@@ -15,8 +15,18 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(new URL('/login', req.url));
     }
 
+    // const url = req.nextUrl.clone();
+    // const hostname = req.headers.get('host');
+    // const subdomain = hostname?.split('.')[0];
+
+    // if (subdomain === 'blog') {
+    //     url.pathname = `/blog${url.pathname}`;
+    //     return NextResponse.rewrite(url);
+    // }
+
+
     try {
-        const dashboardResponse = await fetch('http://localhost:8000/dashboard', {
+        const dashboardResponse = await fetch('http://api.getzetachi.com/dashboard', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token || ''}`,
@@ -29,7 +39,7 @@ export async function middleware(req: NextRequest) {
 
         if (dashboardResponse.status === 401 && refreshToken) {
             console.log("Token Invalid, Trying to Refresh");
-            const refreshResponse = await fetch('http://localhost:8000/refresh', {
+            const refreshResponse = await fetch('http://api.getzetachi.com/refresh', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${refreshToken || ''}`,
