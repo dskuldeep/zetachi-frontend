@@ -302,6 +302,7 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
   
       // Parse the JSON response
       const document = await response.json();
+      console.log(document)
   
       // Check for application-specific errors
       if (document.error) {
