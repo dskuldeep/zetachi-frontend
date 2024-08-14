@@ -31,7 +31,7 @@ export default function AIChat() {
       setLoading(true);
       try {
         const accessTokenCookie = Cookies.get("access_token");
-        const response = await fetch('http://api.getzetachi.com/llm-query', {
+        const response = await fetch('https://api.getzetachi.com/llm-query', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -4,7 +4,7 @@ export async function POST(request: any) {
     const {username, email, password, company} = await request.json();
 
     try{
-        const response = await axios.post('http://api.getzetachi.com/register', {
+        const response = await axios.post('https://api.getzetachi.com/register', {
             username,
             email,
             password,

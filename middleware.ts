@@ -26,7 +26,7 @@ export async function middleware(req: NextRequest) {
 
 
     try {
-        const dashboardResponse = await fetch('http://api.getzetachi.com/dashboard', {
+        const dashboardResponse = await fetch('https://api.getzetachi.com/dashboard', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token || ''}`,
@@ -39,7 +39,7 @@ export async function middleware(req: NextRequest) {
 
         if (dashboardResponse.status === 401 && refreshToken) {
             console.log("Token Invalid, Trying to Refresh");
-            const refreshResponse = await fetch('http://api.getzetachi.com/refresh', {
+            const refreshResponse = await fetch('https://api.getzetachi.com/refresh', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${refreshToken || ''}`,

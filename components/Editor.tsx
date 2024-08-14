@@ -37,7 +37,7 @@ const Editor: React.FC<EditorProps> = ({ data, documentId }) => {
           throw new Error('No access token found');
         }
 
-        const response = await fetch(`http://api.getzetachi.com/save-document?document_id=${documentId}`, {
+        const response = await fetch(`https://api.getzetachi.com/save-document?document_id=${documentId}`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -85,7 +85,7 @@ const Editor: React.FC<EditorProps> = ({ data, documentId }) => {
           attaches: {
             class: AttachesTool,
             config: {
-              endpoint: 'http://api.getzetachi.com/upload-attachment',
+              endpoint: 'https://api.getzetachi.com/upload-attachment',
               uploader: {
                 uploadByFile(file: any){
                   if (file.size > 5 * 1024 * 1024) {
@@ -96,7 +96,7 @@ const Editor: React.FC<EditorProps> = ({ data, documentId }) => {
 
                   const formData = new FormData();
                   formData.append('file', file);
-                  return fetch('http://api.getzetachi.com/upload-attachment', {
+                  return fetch('https://api.getzetachi.com/upload-attachment', {
                     method: 'POST',
                     headers: {
                       'Authorization': `Bearer ${accessToken}`
@@ -114,7 +114,7 @@ const Editor: React.FC<EditorProps> = ({ data, documentId }) => {
                       return {
                         success: 1,
                         file: {
-                          url: `http://api.getzetachi.com/download-attachment?file_key=${result.s3_key}`, // Construct the URL
+                          url: `https://api.getzetachi.com/download-attachment?file_key=${result.s3_key}`, // Construct the URL
                           name: result.s3_key, //Use this to clean up the files from s3 later by cross validating deleted files in mongo
                           extension: result.filename.split('.').pop(),
                           title: result.filename

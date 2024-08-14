@@ -13,7 +13,7 @@ export default function Site() {
   const fetchDocument = async (id: string) => {
     try {
       const accessToken = Cookies.get('access_token');
-      const apiUrl = `http://api.getzetachi.com/fetch-document?document_id=${id}`;
+      const apiUrl = `https://api.getzetachi.com/fetch-document?document_id=${id}`;
       const response = await fetch(apiUrl, {
         method: 'GET',
         headers: {

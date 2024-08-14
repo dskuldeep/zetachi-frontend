@@ -81,7 +81,7 @@ const SubMenu: React.FC<SubMenuProps> = ({ items, onSelect, onDelete, onRefresh,
         throw new Error('No access token found');
       }
 
-      const response = await fetch("http://api.getzetachi.com/rename-document", {
+      const response = await fetch("https://api.getzetachi.com/rename-document", {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
