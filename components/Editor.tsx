@@ -58,10 +58,6 @@ const Editor: React.FC<EditorProps> = ({ data, documentId }) => {
   );
 
   useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      return;
-    }
 
     if (containerRef.current) {
       // Clear the container before reinitializing the editor
