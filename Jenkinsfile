@@ -35,18 +35,14 @@ pipeline {
                     sh """
                         ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} '
                         cd ${REMOTE_DIR} &&
-                        # Check if npm process is running
-                        if pgrep -f "npm start" > /dev/null; then
-                            echo "Stopping existing npm process..." &&
-                            pkill -f "npm start" || true  # Allow pkill to return non-zero without failing the build
-                        else
-                            echo "No running npm process found."
-                        fi
+                        # Check and stop npm process if running
+                        pgrep -f "npm start" && pkill -f "npm start" || echo "No running npm process to stop."
                         '
                     """
                 }
             }
         }
+
 
         stage('Start Application') {
             steps {
