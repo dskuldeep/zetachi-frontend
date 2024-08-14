@@ -7,6 +7,7 @@ pipeline {
         REMOTE_DIR = '/home/ubuntu/zetachi-frontend'  // Replace with the full path to the project folder
         SSH_CREDENTIALS_ID = 'Kuldeep-Backend'  // Jenkins stored SSH credentials ID
         GIT_CREDENTIALS_ID = '438bf32e-3b5e-4512-9c92-5eeca959630c'  // Jenkins stored Git credentials ID
+        SCREEN_NAME = 'npm-app'  // The name of the screen session for npm
     }
 
     stages {
@@ -35,23 +36,28 @@ pipeline {
                     sh """
                         ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} '
                         cd ${REMOTE_DIR} &&
-                        # Check and stop npm process if running
-                        pgrep -f "npm start" && pkill -f "npm start" || echo "No running npm process to stop."
+                        # Check and stop existing screen session
+                        if screen -list | grep -q "${SCREEN_NAME}"; then
+                            echo "Stopping existing screen session..." &&
+                            screen -S ${SCREEN_NAME} -X quit || echo "Failed to stop screen session."
+                        else
+                            echo "No existing screen session found."
+                        fi
                         '
                     """
                 }
             }
         }
 
-
-        stage('Start Application') {
+        stage('Start Application in New Screen Session') {
             steps {
                 sshagent(credentials: ["${SSH_CREDENTIALS_ID}"]) {
                     sh """
                         ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} '
                         cd ${REMOTE_DIR} &&
-                        nohup npm start > app.log 2>&1 &
-                        exit
+                        # Start a new screen session for npm
+                        screen -dmS ${SCREEN_NAME} bash -c "npm start; exec bash" &&
+                        echo "New screen session started for npm."
                         '
                     """
                 }
