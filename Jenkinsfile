@@ -36,9 +36,9 @@ pipeline {
                         ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} '
                         cd ${REMOTE_DIR} &&
                         # Check if npm process is running
-                        if pgrep -f "npm start"; then
+                        if pgrep -f "npm start" > /dev/null; then
                             echo "Stopping existing npm process..." &&
-                            pkill -f "npm start"
+                            pkill -f "npm start" || true  # Allow pkill to return non-zero without failing the build
                         else
                             echo "No running npm process found."
                         fi
@@ -66,6 +66,12 @@ pipeline {
     post {
         always {
             echo 'Pipeline finished.'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
+        success {
+            echo 'Pipeline succeeded.'
         }
     }
 }
