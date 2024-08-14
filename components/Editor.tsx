@@ -1,4 +1,4 @@
-"use client";
+
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import EditorJS from '@editorjs/editorjs';
 import Header from '@editorjs/header';
