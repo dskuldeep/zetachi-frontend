@@ -29,13 +29,33 @@ pipeline {
             }
         }
 
+        stage('Stop Existing Application if Running') {
+            steps {
+                sshagent(credentials: ["${SSH_CREDENTIALS_ID}"]) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} '
+                        cd ${REMOTE_DIR} &&
+                        # Check if npm process is running
+                        if pgrep -f "npm start"; then
+                            echo "Stopping existing npm process..." &&
+                            pkill -f "npm start"
+                        else
+                            echo "No running npm process found."
+                        fi
+                        '
+                    """
+                }
+            }
+        }
+
         stage('Start Application') {
             steps {
                 sshagent(credentials: ["${SSH_CREDENTIALS_ID}"]) {
                     sh """
                         ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} '
-                        cd ${REMOTE_DIR} && 
+                        cd ${REMOTE_DIR} &&
                         nohup npm start > app.log 2>&1 &
+                        exit
                         '
                     """
                 }
