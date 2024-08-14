@@ -1,4 +1,4 @@
-
+"use client";
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import EditorJS from '@editorjs/editorjs';
 import Header from '@editorjs/header';
@@ -58,6 +58,10 @@ const Editor: React.FC<EditorProps> = ({ data, documentId }) => {
   );
 
   useEffect(() => {
+    // if (isInitialMount.current) {
+    //   isInitialMount.current = false;
+    //   return;
+    // }
 
     if (containerRef.current) {
       // Clear the container before reinitializing the editor
