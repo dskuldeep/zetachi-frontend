@@ -6,7 +6,7 @@ import { MenuItem, UserSubMenu } from './types';
 import HomeView from './home-view';
 import { SettingsModal } from './settings-modal';
 import { NotificationModal } from './notification-modal';
-import { Bell, Bot, Plus, Power, User } from 'lucide-react';
+import { Bell, Bot, Plus, Power, User, Zap } from 'lucide-react';
 import { TooltipProvider } from './ui/tooltip';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@radix-ui/react-tooltip';
 import ZetaAISheet from './zeta-ai-sheet';
@@ -18,6 +18,7 @@ import Cookies from 'js-cookie';
 import { LoadingSpinner } from './LoadingSpinner';
 import EditorHeader from './editor-header';
 import API_URL from './config';
+import LLMFlowBoard from './react-flow';
 
 
 
@@ -51,6 +52,10 @@ const menuItems: MenuItem[] = [
   },
   {
     href: '#', icon: SettingsIcon, label: 'Settings', children: false,
+    id: null
+  },
+  {
+    href: "#", icon: Zap, label: "Flows", children: false, 
     id: null
   },
   // {
@@ -459,7 +464,7 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
         </div>
       </aside>
       ))}
-      {loading ? (<LoadingSpinner/>) : selectedItem === 'Dashboard' ? (
+      {loading ? (<LoadingSpinner/>) : selectedItem === 'Flows' ? <LLMFlowBoard /> : selectedItem === 'Dashboard' ? (
         <HomeView username={username} items={userSubMenu}/>
       ) : (
         selectedDocument ? (
@@ -472,10 +477,7 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
         </div>) : null
         
       )}
-      {/* {
-        selectedItem === 'msgs' ? <HomeView /> : null
-        
-      } */}
+      
     </div>
   );
 }
