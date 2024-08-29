@@ -17,6 +17,7 @@ import Link from '@editorjs/link';
 import ImageTool from '@editorjs/image';
 import Cookies from 'js-cookie';
 import { debounce } from 'lodash';
+import API_URL from './config';
 
 interface EditorProps {
   data: any;
@@ -37,7 +38,7 @@ const Editor: React.FC<EditorProps> = ({ data, documentId }) => {
           throw new Error('No access token found');
         }
 
-        const response = await fetch(`https://api.getzetachi.com/save-document?document_id=${documentId}`, {
+        const response = await fetch(`${API_URL}/save-document?document_id=${documentId}`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -85,7 +86,7 @@ const Editor: React.FC<EditorProps> = ({ data, documentId }) => {
           attaches: {
             class: AttachesTool,
             config: {
-              endpoint: 'https://api.getzetachi.com/upload-attachment',
+              endpoint: `${API_URL}/upload-attachment`,
               uploader: {
                 uploadByFile(file: any){
                   if (file.size > 5 * 1024 * 1024) {
@@ -96,7 +97,7 @@ const Editor: React.FC<EditorProps> = ({ data, documentId }) => {
 
                   const formData = new FormData();
                   formData.append('file', file);
-                  return fetch('https://api.getzetachi.com/upload-attachment', {
+                  return fetch(`${API_URL}/upload-attachment`, {
                     method: 'POST',
                     headers: {
                       'Authorization': `Bearer ${accessToken}`
@@ -114,8 +115,8 @@ const Editor: React.FC<EditorProps> = ({ data, documentId }) => {
                       return {
                         success: 1,
                         file: {
-                          url: `https://api.getzetachi.com/download-attachment?file_key=${result.s3_key}`, // Construct the URL
-                          name: result.s3_key, //Use this to clean up the files from s3 later by cross validating deleted files in mongo
+                          url: `${API_URL}/download-attachment?file_key=${result.s3_key}`, 
+                          name: result.s3_key, 
                           extension: result.filename.split('.').pop(),
                           title: result.filename
                         }, 
