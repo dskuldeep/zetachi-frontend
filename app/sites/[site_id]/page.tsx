@@ -3,6 +3,7 @@ import { useParams } from 'next/navigation';
 import Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
+import API_URL from '../../../components/config';
 
 const ReadOnlyEditor = dynamic(() => import('@/components/ReadOnlyEditor'), { ssr: false });
 
@@ -13,7 +14,7 @@ export default function Site() {
   const fetchDocument = async (id: string) => {
     try {
       const accessToken = Cookies.get('access_token');
-      const apiUrl = `https://api.getzetachi.com/fetch-document?document_id=${id}`;
+      const apiUrl = `${API_URL}/fetch-document?document_id=${id}`;
       const response = await fetch(apiUrl, {
         method: 'GET',
         headers: {

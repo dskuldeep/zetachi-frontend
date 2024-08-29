@@ -17,6 +17,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import Cookies from 'js-cookie';
 import { LoadingSpinner } from './LoadingSpinner';
 import EditorHeader from './editor-header';
+import API_URL from './config';
+
 
 
 const Editor = dynamic(() => import('./Editor'), { ssr: false });
@@ -74,6 +76,7 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
   const [isMessageOpen, setIsMessageOpen] = useState(false);
   const documentIdFromUrl = initialDocumentId || '';
   const [username, setUsername] = useState('');
+  const [userEmail, setUserEmail] = useState('');
 
   const fetchUser = async() => {
     try {
@@ -82,7 +85,7 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
       if (!token) {
         throw new Error('No access token found');
       }
-      const response = await fetch('https://api.getzetachi.com/dashboard', {
+      const response = await fetch(`${API_URL}/dashboard`, {
 
         headers: {
           'Authorization': `Bearer ${token}`, // Use the 'Authorization' header with 'Bearer' scheme
@@ -99,6 +102,7 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
       const user = await response.json();
 
       setUsername(user.username);
+      setUserEmail(user.email);
     } catch (e){
       console.log("Error in fetching user details", e)
     }
@@ -115,7 +119,7 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
         throw new Error('No access token found');
       }
   
-      const response = await fetch('https://api.getzetachi.com/list-documents', {
+      const response = await fetch(`${API_URL}/list-documents`, {
         headers: {
           'Authorization': `Bearer ${token}`, // Use the 'Authorization' header with 'Bearer' scheme
           'Accept': '*/*'
@@ -163,7 +167,7 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
         throw new Error('No refresh token found');
       }
     
-      const response = await fetch('https://api.getzetachi.com/refresh', {
+      const response = await fetch(`${API_URL}/refresh`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${refreshToken}`,
@@ -214,8 +218,8 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
         if (!token){
           throw new Error('No access token found');
         }
-
-        const response = await fetch(`https://api.getzetachi.com/delete-document?document_id=${id}`, {
+        
+        const response = await fetch(`${API_URL}/delete-document?document_id=${id}`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`, // Use the 'Authorization' header with 'Bearer' scheme
@@ -254,7 +258,7 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
         throw new Error('No access token found');
       }
   
-      const response = await fetch('https://api.getzetachi.com/create-document', {
+      const response = await fetch(`${API_URL}/create-document`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`, // Use the 'Authorization' header with 'Bearer' scheme
@@ -284,7 +288,7 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
       setLoading(true);
       const accessToken = Cookies.get('access_token');
       // Construct the API URL with query parameter
-      const apiUrl = `https://api.getzetachi.com/fetch-document?document_id=${id}`;
+      const apiUrl = `${API_URL}/fetch-document?document_id=${id}`;
   
       // Perform the fetch request with the access token included in headers
       const response = await fetch(apiUrl, {
@@ -408,7 +412,7 @@ export function Dashboard({ initialDocumentId }: DashboardProps) {
           <SettingsModal isOpen={isSettingModalOpen} onClose={closeSettingModal}/>
           <NotificationModal isOpen={isNotificationModalOpen} onClose={closeNotificationModal}/>
           <ZetaAISheet isOpen={isZetaAIOpen} onClose={closeZetaAI}/>
-          <SearchModal isOpen={isSearchOpen} onClose={closeSearch}/>
+          <SearchModal isOpen={isSearchOpen} onClose={closeSearch} userEmail={userEmail}/>
           <MessageModal isOpen={isMessageOpen} onClose={closeMessage}/>
         </div>
         

@@ -1,12 +1,14 @@
 import { NextResponse, NextRequest } from "next/server";
 import axios from 'axios';
+import API_URL from '../../../components/config';
+
 
 
 export async function POST(request: NextRequest){
     const { refresh_token } = await request.json();
 
     try{
-        const response = await axios.post('https://api.getzetachi.com/refresh', {
+        const response = await axios.post(`${API_URL}/refresh`, {
             token: refresh_token,
         });
         const { access_token } = response.data.access_token;

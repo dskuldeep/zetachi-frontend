@@ -5,6 +5,7 @@ import { MenuItem } from "./types";
 import { Trash, Pencil, Copy } from "lucide-react";
 import { Input } from "./ui/input";
 import Cookies from "js-cookie";
+import API_URL from './config';
 
 interface SubMenuProps {
   items: MenuItem[];
@@ -81,7 +82,7 @@ const SubMenu: React.FC<SubMenuProps> = ({ items, onSelect, onDelete, onRefresh,
         throw new Error('No access token found');
       }
 
-      const response = await fetch("https://api.getzetachi.com/rename-document", {
+      const response = await fetch(`${API_URL}/rename-document`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
