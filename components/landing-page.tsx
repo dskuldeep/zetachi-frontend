@@ -44,7 +44,7 @@ export function LandingPage() {
           <div className="container mx-auto px-4 md:px-6 text-center">
             <h1 className="text-4xl font-bold sm:text-5xl lg:text-6xl">Zetachi - AI Driven Workflow Automation Platform</h1>
             <p className="mt-4 max-w-2xl mx-auto text-lg sm:text-xl">
-              Create and manage AI workflows using your own data, connect with multiple data sources, applications and automate complex workflows with LLM-based intelligence.
+              Create and manage AI worflows using your own data, connect with multiple data sources, applications and automate complex workflows with LLM-based intelligence.
             </p>
             <div className="mt-8 flex justify-center gap-4">
               <Link
@@ -176,6 +176,7 @@ export function LandingPage() {
                 href="https://blog.getzetachi.com"
                 className="inline-flex h-12 items-center justify-center rounded-md bg-black text-white px-8 text-sm font-medium shadow transition-colors hover:bg-gray-700"
                 prefetch={false}
+                target="_blank"
               >
                 Visit Our Blog
               </Link>
