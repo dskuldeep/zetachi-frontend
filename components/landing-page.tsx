@@ -111,13 +111,7 @@ export function LandingPage() {
                   Generate reports automatically from your data sources, saving time and reducing errors.
                 </p>
               </div>
-              <div className="flex flex-col items-center p-4 border rounded-lg shadow">
-                <CheckCircle className="h-10 w-10 text-black" />
-                <h3 className="text-xl font-semibold">Task Management</h3>
-                <p className="mt-2 text-gray-600">
-                  Streamline task assignments and track progress with integrated project management tools.
-                </p>
-              </div>
+              
               <div className="flex flex-col items-center p-4 border rounded-lg shadow">
                 <Database className="h-10 w-10 text-black" />
                 <h3 className="text-xl font-semibold">Data Integration</h3>
@@ -125,13 +119,7 @@ export function LandingPage() {
                   Connect multiple data sources seamlessly to create a unified view of your operations.
                 </p>
               </div>
-              <div className="flex flex-col items-center p-4 border rounded-lg shadow">
-                <Users className="h-10 w-10 text-black" />
-                <h3 className="text-xl font-semibold">Real-time Collaboration</h3>
-                <p className="mt-2 text-gray-600">
-                  Collaborate with your team in real-time, sharing insights and updates instantly.
-                </p>
-              </div>
+              
               <div className="flex flex-col items-center p-4 border rounded-lg shadow">
                 <Settings className="h-10 w-10 text-black" />
                 <h3 className="text-xl font-semibold">Custom Workflows</h3>
@@ -139,13 +127,7 @@ export function LandingPage() {
                   Design custom workflows tailored to your business needs, enhancing efficiency and productivity.
                 </p>
               </div>
-              <div className="flex flex-col items-center p-4 border rounded-lg shadow">
-                <BarChart className="h-10 w-10 text-black" />
-                <h3 className="text-xl font-semibold">AI-Powered Insights</h3>
-                <p className="mt-2 text-gray-600">
-                  Leverage AI to gain insights from your data, helping you make informed decisions faster.
-                </p>
-              </div>
+              
             </div>
             <div className="mt-8 flex justify-center gap-4">
               <Link
