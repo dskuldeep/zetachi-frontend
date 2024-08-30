@@ -6,12 +6,12 @@ const initialNodes = [
     // Define your initial nodes and edges here
     {
         id: '1',
-        data: { label: 'Lead Qualification' },
+        data: { label: 'Node 1' },
         position: { x: 250, y: 5 },
     },
     {
         id: '2',
-        data: { label: 'Send Marketing Email' },
+        data: { label: 'Node 2' },
         position: { x: 250, y: 100 },
     },
 ];
@@ -23,6 +23,11 @@ export default function App() {
 
     const onNodesChange = (changes: any) => setNodes((nds) => applyNodeChanges(changes, nds));
     const onEdgesChange = (changes: any) => setEdges((eds) => applyEdgeChanges(changes, eds));
+    const onEdgesDelete = (edgesToDelete: any) => setEdges((eds) => eds.filter((e) => !edgesToDelete.includes(e)));
+    const onNodesDelete = (nodesToDelete: any) => {
+        setNodes((nds) => nds.filter((n) => !nodesToDelete.includes(n)));
+        setEdges((eds) => eds.filter((e) => !nodesToDelete.some((n: any) => n.id === e.source || n.id === e.target)));
+    };
 
     const addNode = () => {
         const newNode = {
@@ -43,7 +48,9 @@ export default function App() {
                 edges={edges} 
                 onNodesChange={onNodesChange} 
                 onEdgesChange={onEdgesChange}
-                onConnect={onConnect} // Add this prop
+                onEdgesDelete={onEdgesDelete} // Add this prop
+                onNodesDelete={onNodesDelete} // Add this prop
+                onConnect={onConnect}
             >
                 <Background variant={BackgroundVariant.Dots} gap={12} />
             </ReactFlow>
