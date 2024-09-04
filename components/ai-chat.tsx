@@ -9,6 +9,7 @@ import remarkGfm from 'remark-gfm';
 import { FC } from 'react';
 import { Textarea } from "./ui/textarea";
 import { LoadingSpinner } from "./LoadingSpinner";
+import API_URL from './config';
 
 
 
@@ -31,7 +32,7 @@ export default function AIChat() {
       setLoading(true);
       try {
         const accessTokenCookie = Cookies.get("access_token");
-        const response = await fetch('https://api.getzetachi.com/llm-query', {
+        const response = await fetch(`${API_URL}/llm-query`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

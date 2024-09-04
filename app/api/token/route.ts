@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
+import API_URL from '../../../components/config';
 
 export async function POST(request: Request) {
     // Parse the request JSON
@@ -12,7 +13,7 @@ export async function POST(request: Request) {
         params.append('password', password);
 
         // Send a POST request with URL-encoded data
-        const response = await axios.post("https://api.getzetachi.com/token", params, {
+        const response = await axios.post(`${API_URL}/token`, params, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
