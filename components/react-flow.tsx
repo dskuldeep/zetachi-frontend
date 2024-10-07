@@ -8,7 +8,6 @@ import TriggerNode from './trigger-node';
 import AgentNode from './agent-node';
 import CSVNode from './csv-node';
 
-
 const nodeTypes: NodeTypes = {
     manualTrigger: TriggerNode,
     search: SearchNode,
@@ -20,13 +19,13 @@ const initialNodes: Node[] = [
     {
         id: '1',
         type: 'manualTrigger',
-        data: { label: 'Manual Trigger' },
+        data: { id: '1', label: 'Manual Trigger' }, // Pass id here
         position: { x: 250, y: 5 },
     },
     {
         id: '2',
-        type: 'search', // Ensure this matches the key in nodeTypes
-        data: { label: 'Search', searchTerm: '' },
+        type: 'search',
+        data: { id: '2', label: 'Search', searchTerm: '' }, // Pass id here
         position: { x: 250, y: 100 },
     },
     // Add other initial nodes as needed
@@ -49,16 +48,27 @@ export default function App() {
     };
 
     const addNode = (type: keyof typeof nodeTypes) => {
+        const newNodeId = `${nodes.length + 1}`;
         const newNode: Node = {
-            id: `${nodes.length + 1}`,
-            type: type, // Ensure type is correctly assigned
-            data: { label: type },
+            id: newNodeId,
+            type: type,
+            data: { id: newNodeId, label: type }, 
             position: { x: Math.random() * 400, y: Math.random() * 400 },
         };
         setNodes((nds) => nds.concat(newNode));
     };
 
-    const onConnect = (params: Connection | Edge) => setEdges((eds) => addEdge(params, eds));
+    const onConnect = (params: Connection | Edge) => {
+        const { source, target } = params;
+        const hasConnection = edges.some(edge => edge.target === target);
+
+        // Prevent connection if target already has a connection
+        if (!hasConnection) {
+            setEdges((eds) => addEdge(params, eds));
+        } else {
+            console.log(`Target node with id ${target} already has a connection.`);
+        }
+    };
 
     const handleNodeClick = (_: React.MouseEvent, node: Node) => {
         setSelectedNode(node);
@@ -72,7 +82,7 @@ export default function App() {
     };
 
     return (
-        <div style={{ width: '100vw', height: '100vh' }}>
+        <div className="w-screen h-screen flex flex-col">
             <div className="toolbar">
                 <Button variant="outline" onClick={() => addNode('manualTrigger')}>
                     <CirclePlayIcon className="mr-2 h-4 w-4" />
@@ -91,22 +101,27 @@ export default function App() {
                     CSV Tool
                 </Button>
             </div>
-            <ReactFlow 
-                nodes={nodes} 
-                edges={edges} 
-                onNodesChange={onNodesChange} 
-                onEdgesChange={onEdgesChange}
-                onEdgesDelete={onEdgesDelete}
-                onNodesDelete={onNodesDelete}
-                onConnect={onConnect}
-                onNodeClick={handleNodeClick}
-                defaultEdgeOptions={defaultEdgeOptions}
-                nodeTypes={nodeTypes} // Register custom node types here
-            >
-                <Background variant={BackgroundVariant.Dots} gap={12} />
-                <MiniMap />
-                <Controls style={{ bottom: '20px' }}/>
-            </ReactFlow>
+            <div className="flex-1">
+                <ReactFlow 
+                    nodes={nodes} 
+                    edges={edges} 
+                    onNodesChange={onNodesChange} 
+                    onEdgesChange={onEdgesChange}
+                    onEdgesDelete={onEdgesDelete}
+                    onNodesDelete={onNodesDelete}
+                    onConnect={onConnect}
+                    onNodeClick={handleNodeClick}
+                    defaultEdgeOptions={defaultEdgeOptions}
+                    nodeTypes={nodeTypes} // Register custom node types here
+                    className="h-full" // Ensure ReactFlow takes full height
+                >
+                    <Background variant={BackgroundVariant.Dots} gap={12} />
+                    <MiniMap />
+                    <Controls style={{ bottom: '20px' }}/>
+                </ReactFlow>
+            </div>
         </div>
     );
 }
+
+// Use Strict Mode to remove the React Flow text at the bottom
